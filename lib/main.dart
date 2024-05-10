@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:helu/utils/widget_utils.dart';
 import 'package:helu/view/stt/speech_to_text_page.dart';
 import 'package:helu/view/tts/text_to_speech_page.dart';
 
@@ -19,7 +21,51 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       // home: const TextToSpeechPage(),
-      home: const SpeechToTextPage(),
+      home: const Home()
+      // home: const SpeechSamplePage(),
     );
   }
 }
+
+class Home extends StatelessWidget {
+  const Home({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: WidgetUtils.createAppBar('demo'),
+      body: SafeArea(
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              InkWell(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const SpeechToTextPage()));
+                },
+                child: Card(
+                  child: Container(
+                      padding: const EdgeInsets.all(100),
+                      child: const Text('Speech to Text')
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const TextToSpeechPage()));
+                },
+                child: Card(
+                  child: Container(
+                      padding: const EdgeInsets.all(100),
+                      child: const Text('Text to Speech')
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+

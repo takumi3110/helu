@@ -13,7 +13,7 @@ class TextToSpeechPage extends StatefulWidget {
 class _TextToSpeechPageState extends State<TextToSpeechPage> {
   TextEditingController textController = TextEditingController();
 
-  final String defaultLanguage = 'en-US';
+  final String defaultLanguage = 'ja-JP';
 
   TextToSpeech tts = TextToSpeech();
 
@@ -81,14 +81,14 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: WidgetUtils.createAppBar('TextToSpeech'),
+      appBar: WidgetUtils.createAppBar('Text To Speech'),
       body: SafeArea(
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
               child: Center(
                 child: Column(
-                  children: [
+                  children: <Widget>[
                     TextField(
                       controller: textController,
                       maxLines: 5,
@@ -99,7 +99,7 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
                         });
                       },
                     ),
-                    sliderRow(
+                    WidgetUtils.sliderRow(
                         'Volume',
                         Slider(
                           value: volume,
@@ -115,7 +115,7 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
                         ),
                         '(${volume.toStringAsFixed(2)})'),
                     // TODO;
-                    sliderRow(
+                    WidgetUtils.sliderRow(
                         'Rate',
                         Slider(
                           value: rate,
@@ -129,7 +129,7 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
                           },
                         ),
                         '(${rate.toStringAsFixed(2)})'),
-                    sliderRow(
+                    WidgetUtils.sliderRow(
                         'Pitch',
                         Slider(
                             value: pitch,
@@ -187,6 +187,17 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
                             child: Container(
                               padding: const EdgeInsets.only(right: 10),
                               child: ElevatedButton(
+                                child: const Text('Speak'),
+                                onPressed: () {
+                                  speak();
+                                },
+                              ),
+                            )
+                        ),
+                        Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.only(right: 10),
+                              child: ElevatedButton(
                                   child: const Text('STOP'),
                                   onPressed: () {
                                     tts.stop();
@@ -206,26 +217,30 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
                               ),
                             ),
                           ),
-                        if (supportResume)
-                          Expanded(
-                              child: Container(
-                                padding: const EdgeInsets.only(right: 10),
-                                child: ElevatedButton(
-                                  child: const Text('Resume'),
-                                  onPressed: () {
-                                    tts.resume();
-                                  },
-                                ),
-                              )
-                          ),
                         Expanded(
                             child: ElevatedButton(
-                              child: const Text('Speak'),
+                              child: const Text('Reset'),
                               onPressed: () {
-                                speak();
+                                setState(() {
+                                  textController.text = '';
+                                  text = '';
+                                });
                               },
                             )
                         )
+
+                        // if (supportResume)
+                        //   Expanded(
+                        //       child: Container(
+                        //         padding: const EdgeInsets.only(right: 10),
+                        //         child: ElevatedButton(
+                        //           child: const Text('Resume'),
+                        //           onPressed: () {
+                        //             tts.resume();
+                        //           },
+                        //         ),
+                        //       )
+                        //   ),
                       ],
                     ),
                   ],
@@ -233,13 +248,6 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
               ),
             ),
           )),
-    );
-  }
-
-  Widget sliderRow(String title, Slider child, String result) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [Text(title), Expanded(child: child), Text(result)],
     );
   }
 

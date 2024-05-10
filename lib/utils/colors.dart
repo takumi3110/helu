@@ -1,4 +1,4 @@
 import 'package:flutter/material.dart';
 
-const bgColor = Color(0x0f00a67e);
+const bgColor = Color(0xf5600a6);
 const textColor = Color(0xfffefdfc);
