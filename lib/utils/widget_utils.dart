@@ -7,4 +7,11 @@ class WidgetUtils {
       elevation: 1,
     );
   }
+
+  static Widget sliderRow(String title, Slider child, String result) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [Text(title), Expanded(child: child), Text(result)],
+    );
+  }
 }
