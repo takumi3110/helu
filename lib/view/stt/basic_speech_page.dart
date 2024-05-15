@@ -6,6 +6,7 @@ import 'package:helu/utils/widget_utils.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:speech_to_text/speech_to_text_web.dart';
 
 class BasicSpeechPage extends StatefulWidget {
   const BasicSpeechPage({super.key});
@@ -17,10 +18,11 @@ class BasicSpeechPage extends StatefulWidget {
 class _BasicSpeechPageState extends State<BasicSpeechPage> {
 
   final SpeechToText _speech = SpeechToText();
-  int _listenFor = 1;
+  final SpeechToTextPlugin web = SpeechToTextPlugin();
+  final int _listenFor = 1;
   int _pauseFor = 5;
-  bool _isLogEvents = false;
-  bool _onDevice = false;
+  final bool _isLogEvents = false;
+  final bool _onDevice = false;
   bool _hasSpeech = false;
   double level = 0.0;
   double minSoundLevel = 50000;
@@ -28,7 +30,7 @@ class _BasicSpeechPageState extends State<BasicSpeechPage> {
   String lastWords = '';
   String lastError = '';
   String lastStatus = '';
-  String? _currentLocaleId = '';
+  String? _currentLocaleId = 'ja_JP';
   List<LocaleName> _localeNames = [];
 
   Future<void> initSpeechState() async {
@@ -45,6 +47,7 @@ class _BasicSpeechPageState extends State<BasicSpeechPage> {
 
         var systemLocale = await _speech.systemLocale();
         _currentLocaleId = systemLocale?.localeId ?? '';
+
       }
       if (!mounted) return;
 
@@ -111,11 +114,11 @@ class _BasicSpeechPageState extends State<BasicSpeechPage> {
       // listenFor: Duration(minutes: listenFor ?? 3),
       // 単語が検出されない状態の音声の一時停止の最大時間
       pauseFor: Duration(seconds: pauseFor ?? 3),
-      localeId: _currentLocaleId,
+      localeId: 'ja_JP',
       onSoundLevelChange: soundLevelListener,
       listenOptions: options,
     );
-    setState(() {});
+    // setState(() {});
   }
 
   void stopListening() {

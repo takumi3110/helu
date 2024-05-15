@@ -1,0 +1,7 @@
+deploy:
+  stage: build
+  script:
+    - flutter build web
+    - pwd
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "release"'

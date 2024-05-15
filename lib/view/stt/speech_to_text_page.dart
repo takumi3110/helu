@@ -39,7 +39,7 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> with TickerProvider
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
           child: TabBarView(
             controller: _tabController,
-            children:<Widget>[
+            children:const <Widget>[
               BasicSpeechPage(),
               AudioPlayerPage(title: 'audio'),
             ]
