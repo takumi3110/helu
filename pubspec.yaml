@@ -71,7 +71,6 @@ flutter:
   assets:
      - assets/
      - assets/sounds/
-     - assets/helu_service_account.json
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
