@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:helu/utils/function_utils.dart';
@@ -5,7 +6,6 @@ import 'package:helu/utils/widget_utils.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
-import 'package:speech_to_text/speech_to_text_web.dart';
 import 'package:text_to_speech/text_to_speech.dart';
 import 'package:translator/translator.dart';
 
@@ -30,19 +30,20 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
   List<String> languageCodes = [];
   String? voice;
   final String defaultLanguage = 'en-US';
-  bool isTtsStart = false;
+  bool isTtsStarting = false;
+  String _translateLocaleId = '';
 
   /// sttの設定値たち
   final SpeechToText _speech = SpeechToText();
   final bool _isLogEvents = false;
   final bool _onDevice = false;
+  final String _defaultLocaleId = 'ja-JP';
   bool _hasSpeech = false;
   double level = 0.0;
   String lastWords = '';
   String lastError = '';
   String lastStatus = '';
   String _currentLocaleId = '';
-  String _defaultLocaleId = 'ja-JP';
   List<MediaDeviceInfo> micList = [];
   String selectedMicId = '';
   MediaStream? localStream;
@@ -123,6 +124,7 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
     FunctionUtils.logEvent('start listening');
     wordController.text = '';
     translatedController.text = '';
+    isTtsStarting = false;
     lastError = '';
     // マイク選択
     await getUserAudioMedia();
@@ -267,14 +269,14 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
   }
 
   // 翻訳した結果を読み上げ
-  void speak() {
+  Future<void> speak() async{
+    setState(() {
+      isTtsStarting = true;
+    });
     if (languageCode != null) {
       tts.setLanguage(languageCode!);
     }
-    tts.speak(translatedController.text);
-    setState(() {
-      isTtsStart = true;
-    });
+    await tts.speak(translatedController.text);
   }
 
   @override
@@ -298,7 +300,7 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
                 children: [
                   Expanded(
                     child: Container(
-                      height: 200,
+                      height: MediaQuery.sizeOf(context).height * 0.3,
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                           border: Border.all(),
@@ -306,28 +308,8 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
                       ),
                       child: Column(
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(_currentLocaleId == 'ja-JP' ? '日本語': _currentLocaleId, style: TextStyle(color: Colors.grey),),
-                              InkWell(
-                                  borderRadius: BorderRadius.circular(50),
-                                onTap: () {
-                                    wordController.text = '';
-                                    translatedController.text = '';
-                                },
-                                  child: const Icon(Icons.close, color: Colors.grey,)
-                              ),
-                            ],
-                          ),
-                          TextField(
-                            controller: wordController,
-                            maxLines: 5,
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                            ),
-                            textAlign: TextAlign.start,
-                          ),
+                          resultHeader(_currentLocaleId == 'ja-JP' ? '日本語': _currentLocaleId),
+                          resultTextField(wordController),
                         ],
                       ),
                     ),
@@ -338,7 +320,7 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
                   ),
                   Expanded(
                     child: Container(
-                      height: 200,
+                      height: MediaQuery.sizeOf(context).height * 0.3,
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                           border: Border.all(),
@@ -346,43 +328,25 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
                       ),
                       child: Column(
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text('英語', style: TextStyle(color: Colors.grey),),
-                              InkWell(
-                                borderRadius: BorderRadius.circular(50),
-                                  onTap: () {
-                                    translatedController.text = '';
-                                  },
-                                  child: const Icon(Icons.close, color: Colors.grey,)
-                              ),
-                            ],
-                          ),
-                          TextField(
-                            controller: translatedController,
-                            maxLines: 5,
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                            ),
-                            textAlign: TextAlign.start,
-                          ),
+                          resultHeader(_translateLocaleId == '' ? '英語': _translateLocaleId),
+                          resultTextField(translatedController),
                           Expanded(
                             child: Align(
                               alignment: Alignment.topRight,
                               child: InkWell(
-                                onTap: () {
-                                  if (isTtsStart == false) {
-                                    speak();
+                                onTap: () async{
+                                  if (isTtsStarting == false) {
+                                    await speak();
+                                    debugPrint('end');
                                   } else {
                                     tts.stop();
                                     setState(() {
-                                      isTtsStart = false;
+                                      isTtsStarting = false;
                                     });
                                   }
                                 },
                                   child: Icon(
-                                    isTtsStart ? Icons.stop_circle_outlined: Icons.play_circle_outline,
+                                    isTtsStarting ? Icons.stop_circle_outlined: Icons.play_circle_outline,
                                     color: Colors.grey,
                                     size: 30,
                                   )
@@ -489,5 +453,38 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
       ),
 
     );
+
+
   }
+
+  TextField resultTextField(TextEditingController controller) {
+    return TextField(
+      controller: controller,
+      maxLines: (MediaQuery.sizeOf(context).height).toInt() ~/ 100 - 2,
+      decoration: const InputDecoration(
+        border: InputBorder.none,
+      ),
+      textAlign: TextAlign.start,
+    );
+  }
+
+  Row resultHeader(String locale) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(locale, style: const TextStyle(color: Colors.grey),),
+        InkWell(
+            borderRadius: BorderRadius.circular(50),
+            onTap: () {
+              wordController.text = '';
+              translatedController.text = '';
+              isTtsStarting = false;
+            },
+            child: const Icon(Icons.close, color: Colors.grey,)
+        ),
+      ],
+    );
+  }
+
+
 }
