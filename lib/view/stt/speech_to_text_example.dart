@@ -7,17 +7,17 @@ import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 
-class SpeechSamplePage extends StatefulWidget {
-  const SpeechSamplePage({super.key});
+class SpeechToTextExample extends StatefulWidget {
+  const SpeechToTextExample({super.key});
 
   @override
-  State<SpeechSamplePage> createState() => _SpeechSamplePageState();
+  State<SpeechToTextExample> createState() => _SpeechToTextExampleState();
 }
 
 /// An example that demonstrates the basic functionality of the
 /// SpeechToText plugin for using the speech recognition capability
 /// of the underlying platform.
-class _SpeechSamplePageState extends State<SpeechSamplePage> {
+class _SpeechToTextExampleState extends State<SpeechToTextExample> {
   bool _hasSpeech = false;
   bool _logEvents = false;
   bool _onDevice = false;

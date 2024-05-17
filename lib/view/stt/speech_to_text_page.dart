@@ -5,6 +5,7 @@ import 'package:helu/utils/widget_utils.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:speech_to_text/speech_to_text_web.dart';
 import 'package:text_to_speech/text_to_speech.dart';
 import 'package:translator/translator.dart';
 
@@ -40,7 +41,8 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
   String lastWords = '';
   String lastError = '';
   String lastStatus = '';
-  String? _currentLocaleId = 'ja_JP';
+  String _currentLocaleId = '';
+  String _defaultLocaleId = 'ja-JP';
   List<MediaDeviceInfo> micList = [];
   String selectedMicId = '';
   MediaStream? localStream;
@@ -63,7 +65,7 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
         // can be displayed in the UI for selection by the user.
         // _localeNames = await _speech.locales();
         var systemLocale = await _speech.systemLocale();
-        _currentLocaleId = systemLocale?.localeId ?? '';
+        _currentLocaleId = systemLocale?.localeId ?? _defaultLocaleId;
         // マイクの許可ほしいから一瞬だけlistenさせる
         // _speech.listen(
         //   listenFor: const Duration(milliseconds: 1)
@@ -197,7 +199,7 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
     }
   }
 
-  //TODO: 使用するデバイスを取得できるはず
+  //使用するデバイスを取得できる
   Future<void> getUserAudioMedia() async {
     try {
       final Map<String, dynamic> constraints = {
@@ -307,7 +309,7 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('日本語', style: TextStyle(color: Colors.grey),),
+                              Text(_currentLocaleId == 'ja-JP' ? '日本語': _currentLocaleId, style: TextStyle(color: Colors.grey),),
                               InkWell(
                                   borderRadius: BorderRadius.circular(50),
                                 onTap: () {
