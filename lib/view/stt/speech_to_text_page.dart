@@ -159,12 +159,12 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
     if (_speech.isListening) {
       FunctionUtils.logEvent('stop listening');
       _speech.stop();
-      if (wordController.text.isNotEmpty) {
-        createTranslator();
-      }
       setState(() {
         level = 0.0;
       });
+    }
+    if (wordController.text.isNotEmpty) {
+      createTranslator();
     }
   }
 
