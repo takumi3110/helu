@@ -65,9 +65,10 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
         var systemLocale = await _speech.systemLocale();
         _currentLocaleId = systemLocale?.localeId ?? '';
         // マイクの許可ほしいから一瞬だけlistenさせる
-        _speech.listen(
-          listenFor: const Duration(milliseconds: 1)
-        );
+        // _speech.listen(
+        //   listenFor: const Duration(milliseconds: 1)
+        // );
+        navigator.mediaDevices.getUserMedia({'audio': true});
       }
       if (!mounted) return;
       setState(() {
@@ -177,6 +178,9 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
   /// デバイスを取得
   Future<void> getDeviceList() async{
     try {
+      setState(() {
+        micList = [];
+      });
       var devices = await navigator.mediaDevices.enumerateDevices();
       for (var device in devices) {
         if (device.kind == 'audioinput') {
@@ -392,14 +396,15 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20.0),
-                    child: micList.isNotEmpty ? Container(
+                    child: Container(
                       alignment: Alignment.centerLeft,
-                      width: 300,
+                      width: 500,
                       child: DropdownButtonFormField<String>(
-                        icon: const Icon(Icons.arrow_downward),
+                        icon: const Icon(Icons.arrow_drop_down),
                         iconSize: 24,
                         elevation: 16,
                         style: const TextStyle(color: Colors.deepPurple),
@@ -418,10 +423,14 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
                           child: Text(device.label),
                         )).toList(),
                       ),
-                    ): ElevatedButton(
+                    )
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: ElevatedButton(
                         onPressed: () {
                           getDeviceList();
-                          },
+                        },
                         child: const Text('get device')
                     ),
                   ),
