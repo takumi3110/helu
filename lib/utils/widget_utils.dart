@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class WidgetUtils {
   static AppBar createAppBar(String title) {
     return AppBar(
-      title: Text(title),
+      title: Align(alignment: Alignment.center, child: Text(title)),
       elevation: 1,
     );
   }

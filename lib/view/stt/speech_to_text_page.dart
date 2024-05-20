@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:html' as html;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:helu/utils/function_utils.dart';
@@ -6,6 +7,7 @@ import 'package:helu/utils/widget_utils.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:speech_to_text/speech_to_text_web.dart';
 import 'package:text_to_speech/text_to_speech.dart';
 import 'package:translator/translator.dart';
 
@@ -35,8 +37,9 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
 
   /// sttの設定値たち
   final SpeechToText _speech = SpeechToText();
+  final SpeechToTextPlugin web = SpeechToTextPlugin();
   final bool _isLogEvents = false;
-  final bool _onDevice = false;
+  final bool _onDevice = true;
   final String _defaultLocaleId = 'ja-JP';
   bool _hasSpeech = false;
   double level = 0.0;
@@ -53,6 +56,13 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
   // final int _listenFor = 1;
   // int _pauseFor = 5;
 
+  // web
+  html.SpeechRecognition? _webSpeech;
+  static const _doneNoResult = 'doneNoResult';
+  bool _resultSent = false;
+  bool _doneSent = false;
+  bool _aggregateResults = true;
+
   /// initialize
   Future<void> initSpeechState() async {
     try {
@@ -67,11 +77,7 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
         // _localeNames = await _speech.locales();
         var systemLocale = await _speech.systemLocale();
         _currentLocaleId = systemLocale?.localeId ?? _defaultLocaleId;
-        // マイクの許可ほしいから一瞬だけlistenさせる
-        // _speech.listen(
-        //   listenFor: const Duration(milliseconds: 1)
-        // );
-        navigator.mediaDevices.getUserMedia({'audio': true});
+        // await navigator.mediaDevices.getUserMedia({'audio': true});
       }
       if (!mounted) return;
       setState(() {
@@ -133,7 +139,7 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
     // final listenFor = _listenFor;
     final options = SpeechListenOptions(
         onDevice: _onDevice,
-        listenMode: ListenMode.confirmation,
+        // listenMode: ListenMode.deviceDefault,
         cancelOnError: true,
         partialResults: true,
         autoPunctuation: true,
@@ -185,7 +191,9 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
       setState(() {
         micList = [];
       });
+      await navigator.mediaDevices.getUserMedia({'audio': true});
       var devices = await navigator.mediaDevices.enumerateDevices();
+      devices.sort((a, b) => a.deviceId.length.compareTo(b.deviceId.length));
       for (var device in devices) {
         if (device.kind == 'audioinput') {
           var id = device.deviceId;
@@ -209,6 +217,7 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
           'deviceId': selectedMicId
         }
       };
+      debugPrint('mediaDevice.getMedia() constraints: $constraints');
       final MediaStream stream = await navigator.mediaDevices.getUserMedia(constraints);
       setState(() {
         localStream = stream;
@@ -258,7 +267,6 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
       setState(() {});
     }
   }
-
 
   Future<String?> getVoiceByLang(String lang) async {
     final List<String>? voices = await tts.getVoiceByLang(languageCode!);

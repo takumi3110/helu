@@ -1,34 +1,57 @@
 PODS:
+  - audioplayers_darwin (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
+  - flutter_webrtc (0.9.17):
+    - Flutter
+    - WebRTC-SDK (= 104.5112.07)
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - speech_to_text (0.0.1):
     - Flutter
     - Try
   - text_to_speech (0.0.1):
     - Flutter
   - Try (2.1.1)
+  - WebRTC-SDK (104.5112.07)
 
 DEPENDENCIES:
+  - audioplayers_darwin (from `.symlinks/plugins/audioplayers_darwin/ios`)
   - Flutter (from `Flutter`)
+  - flutter_webrtc (from `.symlinks/plugins/flutter_webrtc/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - speech_to_text (from `.symlinks/plugins/speech_to_text/ios`)
   - text_to_speech (from `.symlinks/plugins/text_to_speech/ios`)
 
 SPEC REPOS:
   trunk:
     - Try
+    - WebRTC-SDK
 
 EXTERNAL SOURCES:
+  audioplayers_darwin:
+    :path: ".symlinks/plugins/audioplayers_darwin/ios"
   Flutter:
     :path: Flutter
+  flutter_webrtc:
+    :path: ".symlinks/plugins/flutter_webrtc/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
   speech_to_text:
     :path: ".symlinks/plugins/speech_to_text/ios"
   text_to_speech:
     :path: ".symlinks/plugins/text_to_speech/ios"
 
 SPEC CHECKSUMS:
+  audioplayers_darwin: 877d9a4d06331c5c374595e46e16453ac7eafa40
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_webrtc: 6767eafaa728c1e58026e901ca19f3fd5d713397
+  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   speech_to_text: b43a7d99aef037bd758ed8e45d79bbac035d2dfe
   text_to_speech: 8669facdbd5b72d2939b810493defd991634f6f9
   Try: 5ef669ae832617b3cee58cb2c6f99fb767a4ff96
+  WebRTC-SDK: ef83f71e443c135d98de109940343bcf6d313e8f
 
 PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796
 
